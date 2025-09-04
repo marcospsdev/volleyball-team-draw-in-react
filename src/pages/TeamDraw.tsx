@@ -55,8 +55,18 @@ function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
   const [previousTeams, setPreviousTeams] = useState<Player[][]>([]);
   const [name, setName] = useState("");
   const [gender, setGender] = useState<"M" | "F">("M");
+
+  // Estados para o modal de reset
+  const [isResetModalOpen, setIsResetModalOpen] = useState(false);
+  // Estados para o modal de sorteio
+  const [isShuffleModalOpen, setIsShuffleModalOpen] = useState(false);
+
+  // Estados para o snackbar (notificações)
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<
+    "success" | "info" | "warning" | "error"
+  >("success");
 
   const playersPerTeam = 4;
 
@@ -66,7 +76,7 @@ function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
       id: Date.now(),
       name: name.toUpperCase(),
       gender,
-    }; // <--- AQUI: nome agora é sempre maiúsculo
+    };
     setPlayers([...players, newPlayer]);
     setName("");
   };
@@ -75,13 +85,13 @@ function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
     setPlayers(players.filter((player) => player.id !== id));
   };
 
-  // Funções para lidar com o modal de confirmação
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
+  // Funções para lidar com o modal de confirmação de reset
+  const handleOpenResetModal = () => {
+    setIsResetModalOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  const handleCloseResetModal = () => {
+    setIsResetModalOpen(false);
   };
 
   // Função para resetar a lista após confirmação
@@ -89,7 +99,19 @@ function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
     setPlayers([]);
     setTeams([]);
     setPreviousTeams([]);
-    handleCloseModal();
+    handleCloseResetModal();
+    setSnackbarMessage("A lista foi resetada com sucesso!");
+    setSnackbarSeverity("info");
+    setSnackbarOpen(true);
+  };
+
+  // Funções para lidar com o modal de confirmação de sorteio
+  const handleOpenShuffleModal = () => {
+    setIsShuffleModalOpen(true);
+  };
+
+  const handleCloseShuffleModal = () => {
+    setIsShuffleModalOpen(false);
   };
 
   const shuffleTeams = () => {
@@ -138,6 +160,10 @@ function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
 
     setPreviousTeams(newTeams);
     setTeams(newTeams);
+    setIsShuffleModalOpen(false);
+    setSnackbarMessage("Times sorteados com sucesso!");
+    setSnackbarSeverity("success");
+    setSnackbarOpen(true);
   };
 
   const handleCopyTeams = () => {
@@ -158,6 +184,8 @@ function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
     teamsText += "\n\nBy Marquinhos & Luquinhas App ©";
 
     navigator.clipboard.writeText(teamsText).then(() => {
+      setSnackbarMessage("Times copiados! Agora é só colar no WhatsApp.");
+      setSnackbarSeverity("success");
       setSnackbarOpen(true);
     });
   };
@@ -247,7 +275,7 @@ function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
           variant="contained"
           size="large"
           startIcon={<Shuffle />}
-          onClick={shuffleTeams}
+          onClick={handleOpenShuffleModal} // Alterado para abrir o modal de confirmação
           disabled={totalPlayers < playersPerTeam * 2}
           sx={{ width: "fit-content" }}
         >
@@ -269,7 +297,7 @@ function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
           <Button
             variant="text"
             startIcon={<RotateLeft />}
-            onClick={handleOpenModal}
+            onClick={handleOpenResetModal} // Alterado para abrir o modal de confirmação de reset
             color="error"
             sx={{ width: "fit-content", marginTop: "1rem" }}
           >
@@ -310,7 +338,6 @@ function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
                           key={idx}
                           className="p-0 flex items-center gap-2"
                         >
-                          {/* AQUI: Garantindo que o nome do jogador seja maiúsculo na exibição */}
                           <span
                             className={`w-3 h-3 rounded-full ${
                               p.gender === "M" ? "bg-blue-500" : "bg-pink-500"
@@ -328,40 +355,65 @@ function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
         </>
       )}
 
-      {/* Snackbar para mostrar o aviso de cópia */}
+      {/* Snackbar para mostrar o aviso */}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={4000}
         onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         <Alert
           onClose={handleCloseSnackbar}
-          severity="success"
+          severity={snackbarSeverity} // Agora dinâmico
           sx={{ width: "100%" }}
         >
-          Times copiados! Agora é só colar no WhatsApp.
+          {snackbarMessage} {/* Agora dinâmico */}
         </Alert>
       </Snackbar>
 
-      {/* Modal de confirmação */}
+      {/* Modal de confirmação para Sorteio */}
       <Dialog
-        open={isModalOpen}
-        onClose={handleCloseModal}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
+        open={isShuffleModalOpen}
+        onClose={handleCloseShuffleModal}
+        aria-labelledby="shuffle-confirmation-title"
+        aria-describedby="shuffle-confirmation-description"
       >
-        <DialogTitle id="alert-dialog-title">
+        <DialogTitle id="shuffle-confirmation-title">
+          {"Confirmar Sorteio"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="shuffle-confirmation-description">
+            Deseja realmente sortear novos times?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseShuffleModal} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={shuffleTeams} color="success" autoFocus>
+            Confirmar
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Modal de confirmação para Reset */}
+      <Dialog
+        open={isResetModalOpen}
+        onClose={handleCloseResetModal}
+        aria-labelledby="reset-confirmation-title"
+        aria-describedby="reset-confirmation-description"
+      >
+        <DialogTitle id="reset-confirmation-title">
           {"Confirmação de Reset"}
         </DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
+          <DialogContentText id="reset-confirmation-description">
             Tem certeza que deseja resetar a lista de jogadores e times
             sorteados?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseModal} color="primary">
+          <Button onClick={handleCloseResetModal} color="primary">
             Cancelar
           </Button>
           <Button onClick={handleConfirmReset} color="error" autoFocus>

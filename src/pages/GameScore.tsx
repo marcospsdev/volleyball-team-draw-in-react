@@ -1,5 +1,15 @@
 import { useState } from "react";
-import { Button, Card } from "@mui/material";
+import {
+  Button,
+  Card,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -19,16 +29,39 @@ function GameScore({ scores, setScores }: GameScoreProps) {
   const [animateA, setAnimateA] = useState<"left" | "right" | null>(null);
   const [animateB, setAnimateB] = useState<"left" | "right" | null>(null);
 
-  const resetScores = () => {
-    // Acessa o setScores via props para resetar o placar no App.tsx
-    setScores({ scoreA: 0, scoreB: 0 });
-  };
+  // Estados para o modal de confirmação de reset
+  const [isResetModalOpen, setIsResetModalOpen] = useState(false);
+
+  // Estados para o snackbar (notificações)
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<
+    "success" | "info" | "warning" | "error"
+  >("success");
 
   const pulse = keyframes`
     0% { background-color: rgba(255,255,255,0); }
     50% { background-color: rgba(255,255,255,0.25); }
     100% { background-color: rgba(255,255,255,0); }
   `;
+
+  // Funções para lidar com o modal de confirmação de reset
+  const handleOpenResetModal = () => {
+    setIsResetModalOpen(true);
+  };
+
+  const handleCloseResetModal = () => {
+    setIsResetModalOpen(false);
+  };
+
+  // Função para resetar o placar após confirmação
+  const handleConfirmReset = () => {
+    setScores({ scoreA: 0, scoreB: 0 });
+    handleCloseResetModal();
+    setSnackbarMessage("O placar foi resetado com sucesso!");
+    setSnackbarSeverity("info");
+    setSnackbarOpen(true);
+  };
 
   const handleCardClick = (
     e: React.MouseEvent<HTMLDivElement, MouseEvent>,
@@ -57,6 +90,10 @@ function GameScore({ scores, setScores }: GameScoreProps) {
       setAnimateB(isRight ? "right" : "left");
       setTimeout(() => setAnimateB(null), 200);
     }
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbarOpen(false);
   };
 
   const renderCard = (
@@ -131,11 +168,52 @@ function GameScore({ scores, setScores }: GameScoreProps) {
         variant="contained"
         color="secondary"
         startIcon={<RefreshIcon />}
-        onClick={resetScores}
+        onClick={handleOpenResetModal} // Alterado para abrir o modal
         className="rounded-full px-6 py-2 shadow-lg"
       >
         Resetar Placar
       </Button>
+
+      {/* Modal de confirmação para Reset */}
+      <Dialog
+        open={isResetModalOpen}
+        onClose={handleCloseResetModal}
+        aria-labelledby="reset-confirmation-title"
+        aria-describedby="reset-confirmation-description"
+      >
+        <DialogTitle id="reset-confirmation-title">
+          {"Confirmação de Reset"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="reset-confirmation-description">
+            Tem certeza que deseja resetar o placar da partida?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseResetModal} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={handleConfirmReset} color="error" autoFocus>
+            Confirmar
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Snackbar para mostrar a notificação */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
