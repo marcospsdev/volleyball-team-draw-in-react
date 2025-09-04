@@ -289,7 +289,7 @@ function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
             onClick={handleCopyTeams}
             sx={{ width: "fit-content", marginTop: "1rem" }}
           >
-            Copiar Lista
+            Copiar Times
           </Button>
         )}
 
