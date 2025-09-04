@@ -57,9 +57,9 @@ function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
   const [gender, setGender] = useState<"M" | "F">("M");
 
   // Estados para o modal de reset
-  const [isResetModalOpen, setIsResetModalOpen] = useState(false);
+  const [isResetModalOpen, setIsResetModal] = useState(false);
   // Estados para o modal de sorteio
-  const [isShuffleModalOpen, setIsShuffleModalOpen] = useState(false);
+  const [isShuffleModalOpen, setIsShuffleModal] = useState(false);
 
   // Estados para o snackbar (notificações)
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -87,11 +87,11 @@ function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
 
   // Funções para lidar com o modal de confirmação de reset
   const handleOpenResetModal = () => {
-    setIsResetModalOpen(true);
+    setIsResetModal(true);
   };
 
   const handleCloseResetModal = () => {
-    setIsResetModalOpen(false);
+    setIsResetModal(false);
   };
 
   // Função para resetar a lista após confirmação
@@ -107,11 +107,11 @@ function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
 
   // Funções para lidar com o modal de confirmação de sorteio
   const handleOpenShuffleModal = () => {
-    setIsShuffleModalOpen(true);
+    setIsShuffleModal(true);
   };
 
   const handleCloseShuffleModal = () => {
-    setIsShuffleModalOpen(false);
+    setIsShuffleModal(false);
   };
 
   const shuffleTeams = () => {
@@ -160,7 +160,7 @@ function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
 
     setPreviousTeams(newTeams);
     setTeams(newTeams);
-    setIsShuffleModalOpen(false);
+    setIsShuffleModal(false);
     setSnackbarMessage("Times sorteados com sucesso!");
     setSnackbarSeverity("success");
     setSnackbarOpen(true);
@@ -170,7 +170,8 @@ function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
     let teamsText = "🚨 *TIMES SORTEADOS!* 🚨\n\n";
 
     teams.forEach((team, index) => {
-      const teamEmoji = teamColors[index] ? teamColors[index].emoji : "";
+      // Pega o emoji fixo se houver, senão, não coloca nenhum
+      const teamEmoji = teamColors[index]?.emoji || "";
       teamsText += `${teamEmoji} *Time ${index + 1}:*\n`;
 
       team.forEach((player) => {
@@ -314,20 +315,24 @@ function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {teams.map((team, i) => {
-              const teamColor =
-                i < teamColors.length
-                  ? teamColors[i]
-                  : { header: `bg-[${getRandomColor()}]`, text: "" };
+              const teamHeaderColor =
+                i < teamColors.length ? teamColors[i].header : null;
+              const teamTextColor =
+                i < teamColors.length ? teamColors[i].text : null;
+              const randomColor = getRandomColor();
               return (
                 <Card
                   key={i}
-                  className={`shadow-md overflow-hidden ${teamColor.text} ${
+                  className={`shadow-md overflow-hidden ${teamTextColor ? teamTextColor : ""} ${
                     i === teams.length - 1 ? "mb-24" : ""
                   }`}
                 >
                   {/* Cabeçalho Colorido */}
                   <div
-                    className={`flex justify-center items-center py-2 text-white font-bold ${teamColor.header}`}
+                    className={`flex justify-center items-center py-2 text-white font-bold ${teamHeaderColor}`}
+                    style={
+                      !teamHeaderColor ? { backgroundColor: randomColor } : {}
+                    }
                   >
                     Time {i + 1}
                   </div>

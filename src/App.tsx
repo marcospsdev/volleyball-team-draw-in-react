@@ -17,6 +17,7 @@ import {
   BottomNavigation,
   BottomNavigationAction,
   Paper,
+  Avatar, // Importar o componente Avatar do Material-UI
 } from "@mui/material";
 import ShuffleIcon from "@mui/icons-material/Shuffle";
 import SportsIcon from "@mui/icons-material/SportsSoccer";
@@ -46,13 +47,37 @@ function Layout({ children }: { children: React.ReactNode }) {
         elevation={0}
         className="bg-gradient-to-r from-blue-500/80 to-indigo-600/80 backdrop-blur-lg shadow-md border-b border-white/20"
       >
-        <Toolbar className="flex justify-center gap-2 py-3">
+        <Toolbar className="flex justify-between items-center py-3 px-4 sm:px-6">
+          {" "}
+          {/* Ajustado para espaçamento entre itens */}
+          {/* Avatar da esquerda */}
+          <Avatar
+            alt="Marquinhos Avatar"
+            src="/path/to/marquinhos-avatar.jpg" // Substitua pelo caminho da sua imagem
+            sx={{
+              width: 40,
+              height: 40,
+              border: "2px solid white",
+              flexShrink: 0,
+            }} // Tamanho e borda
+          />
           <Typography
             variant="h6"
-            className="font-bold text-white tracking-wide drop-shadow-sm"
+            className="font-bold text-white tracking-wide drop-shadow-sm flex-grow text-center" // Centraliza o título
           >
             Marquinhos & Luquinhas ©
           </Typography>
+          {/* Avatar da direita */}
+          <Avatar
+            alt="Luquinhas Avatar"
+            src="/path/to/luquinhas-avatar.jpg" // Substitua pelo caminho da sua imagem
+            sx={{
+              width: 40,
+              height: 40,
+              border: "2px solid white",
+              flexShrink: 0,
+            }} // Tamanho e borda
+          />
         </Toolbar>
       </AppBar>
 
