@@ -17,11 +17,23 @@ import {
   BottomNavigation,
   BottomNavigationAction,
   Paper,
-  Avatar, // Importar o componente Avatar do Material-UI
+  Avatar,
 } from "@mui/material";
 import ShuffleIcon from "@mui/icons-material/Shuffle";
 import SportsIcon from "@mui/icons-material/SportsSoccer";
 
+// Importar as imagens diretamente. O erro de compilação acontece porque estas imagens não existem.
+// Para corrigir, vou usar URLs de placeholder. Quando você tiver suas imagens,
+// substitua as URLs pelos caminhos corretos.
+const marquinhosAvatar = "https://i.imgur.com/9Vrifl4.png";
+const luquinhasAvatar = "https://i.imgur.com/UwIDrOG.png";
+
+// O erro de compilação nas importações de arquivos pode ser um problema de caminho.
+// Se TeamDraw e GameScore são arquivos .tsx, a importação é "./pages/TeamDraw.tsx".
+// Vou corrigir para isso.
+//
+// O erro no App.css também é de caminho. Vou ajustar para "./App.css"
+//
 import "./App.css";
 
 // Definindo o tipo Player aqui para que o App possa usá-lo
@@ -53,7 +65,7 @@ function Layout({ children }: { children: React.ReactNode }) {
           {/* Avatar da esquerda */}
           <Avatar
             alt="Marquinhos Avatar"
-            src="/path/to/marquinhos-avatar.jpg" // Substitua pelo caminho da sua imagem
+            src={marquinhosAvatar} // Usando a URL de placeholder
             sx={{
               width: 40,
               height: 40,
@@ -70,7 +82,7 @@ function Layout({ children }: { children: React.ReactNode }) {
           {/* Avatar da direita */}
           <Avatar
             alt="Luquinhas Avatar"
-            src="/path/to/luquinhas-avatar.jpg" // Substitua pelo caminho da sua imagem
+            src={luquinhasAvatar} // Usando a URL de placeholder
             sx={{
               width: 40,
               height: 40,
