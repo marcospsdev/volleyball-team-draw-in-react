@@ -25,14 +25,12 @@ import {
   RotateLeft,
 } from "@mui/icons-material";
 
-// Define os tipos necessários
 type Player = {
   id: number;
   name: string;
   gender: "M" | "F";
 };
 
-// Define os tipos das props que o componente vai receber
 interface TeamDrawProps {
   players: Player[];
   setPlayers: React.Dispatch<React.SetStateAction<Player[]>>;
@@ -40,7 +38,6 @@ interface TeamDrawProps {
   setTeams: React.Dispatch<React.SetStateAction<Player[][]>>;
 }
 
-// Cores fixas para os times e emojis correspondentes
 const teamColors = [
   { header: "bg-red-500", text: "text-red-500", emoji: "🔴" },
   { header: "bg-blue-500", text: "text-blue-500", emoji: "🔵" },
@@ -49,19 +46,14 @@ const teamColors = [
   { header: "bg-pink-500", text: "text-pink-500", emoji: "🌸" },
 ];
 
-// O componente agora recebe as props
 function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
-  // Mantemos apenas os estados que são locais ao componente
   const [previousTeams, setPreviousTeams] = useState<Player[][]>([]);
   const [name, setName] = useState("");
   const [gender, setGender] = useState<"M" | "F">("M");
 
-  // Estados para o modal de reset
   const [isResetModalOpen, setIsResetModal] = useState(false);
-  // Estados para o modal de sorteio
   const [isShuffleModalOpen, setIsShuffleModal] = useState(false);
 
-  // Estados para o snackbar (notificações)
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<
@@ -85,7 +77,6 @@ function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
     setPlayers(players.filter((player) => player.id !== id));
   };
 
-  // Funções para lidar com o modal de confirmação de reset
   const handleOpenResetModal = () => {
     setIsResetModal(true);
   };
@@ -94,7 +85,6 @@ function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
     setIsResetModal(false);
   };
 
-  // Função para resetar a lista após confirmação
   const handleConfirmReset = () => {
     setPlayers([]);
     setTeams([]);
@@ -105,7 +95,6 @@ function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
     setSnackbarOpen(true);
   };
 
-  // Funções para lidar com o modal de confirmação de sorteio
   const handleOpenShuffleModal = () => {
     setIsShuffleModal(true);
   };
@@ -170,7 +159,6 @@ function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
     let teamsText = "🚨 *TIMES SORTEADOS!* 🚨\n\n";
 
     teams.forEach((team, index) => {
-      // Pega o emoji fixo se houver, senão, não coloca nenhum
       const teamEmoji = teamColors[index]?.emoji || "";
       teamsText += `${teamEmoji} *Time ${index + 1}:*\n`;
 
@@ -217,7 +205,6 @@ function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
         Adicione jogadores e sorteie times equilibrados.
       </p>
 
-      {/* Seção de Adicionar Jogador */}
       <Card className="mb-6 shadow-md">
         <CardContent>
           <div className="flex gap-2 items-center mb-2">
@@ -251,7 +238,6 @@ function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
             </Button>
           </div>
 
-          {/* Contadores */}
           <div className="mb-4 text-sm text-gray-600">
             Total: {totalPlayers} | Homens: {maleCount} | Mulheres:{" "}
             {femaleCount}
@@ -270,13 +256,12 @@ function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
         </CardContent>
       </Card>
 
-      {/* Botões de Ação */}
       <div className="text-center mb-6 flex flex-col items-center">
         <Button
           variant="contained"
           size="large"
           startIcon={<Shuffle />}
-          onClick={handleOpenShuffleModal} // Alterado para abrir o modal de confirmação
+          onClick={handleOpenShuffleModal}
           disabled={totalPlayers < playersPerTeam * 2}
           sx={{ width: "fit-content" }}
         >
@@ -298,7 +283,7 @@ function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
           <Button
             variant="text"
             startIcon={<RotateLeft />}
-            onClick={handleOpenResetModal} // Alterado para abrir o modal de confirmação de reset
+            onClick={handleOpenResetModal}
             color="error"
             sx={{ width: "fit-content", marginTop: "1rem" }}
           >
@@ -307,7 +292,6 @@ function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
         )}
       </div>
 
-      {/* Seção dos Times Sorteados */}
       {teams.length > 0 && (
         <>
           <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">
@@ -327,7 +311,6 @@ function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
                     i === teams.length - 1 ? "mb-24" : ""
                   }`}
                 >
-                  {/* Cabeçalho Colorido */}
                   <div
                     className={`flex justify-center items-center py-2 text-white font-bold ${teamHeaderColor}`}
                     style={
@@ -359,8 +342,6 @@ function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
           </div>
         </>
       )}
-
-      {/* Snackbar para mostrar o aviso */}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={4000}
@@ -369,14 +350,13 @@ function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
       >
         <Alert
           onClose={handleCloseSnackbar}
-          severity={snackbarSeverity} // Agora dinâmico
+          severity={snackbarSeverity}
           sx={{ width: "100%" }}
         >
-          {snackbarMessage} {/* Agora dinâmico */}
+          {snackbarMessage}
         </Alert>
       </Snackbar>
 
-      {/* Modal de confirmação para Sorteio */}
       <Dialog
         open={isShuffleModalOpen}
         onClose={handleCloseShuffleModal}
@@ -401,7 +381,6 @@ function TeamDraw({ players, setPlayers, teams, setTeams }: TeamDrawProps) {
         </DialogActions>
       </Dialog>
 
-      {/* Modal de confirmação para Reset */}
       <Dialog
         open={isResetModalOpen}
         onClose={handleCloseResetModal}

@@ -15,7 +15,6 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { keyframes } from "@emotion/react";
 
-// Define a interface das props para o componente
 interface GameScoreProps {
   scores: { scoreA: number; scoreB: number };
   setScores: React.Dispatch<
@@ -23,16 +22,12 @@ interface GameScoreProps {
   >;
 }
 
-// O componente agora recebe as props
 function GameScore({ scores, setScores }: GameScoreProps) {
-  // Mantemos apenas os estados de animação, que são locais ao componente
   const [animateA, setAnimateA] = useState<"left" | "right" | null>(null);
   const [animateB, setAnimateB] = useState<"left" | "right" | null>(null);
 
-  // Estados para o modal de confirmação de reset
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
 
-  // Estados para o snackbar (notificações)
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
   const [snackbarSeverity, setSnackbarSeverity] = useState<
@@ -45,7 +40,6 @@ function GameScore({ scores, setScores }: GameScoreProps) {
     100% { background-color: rgba(255,255,255,0); }
   `;
 
-  // Funções para lidar com o modal de confirmação de reset
   const handleOpenResetModal = () => {
     setIsResetModalOpen(true);
   };
@@ -54,7 +48,6 @@ function GameScore({ scores, setScores }: GameScoreProps) {
     setIsResetModalOpen(false);
   };
 
-  // Função para resetar o placar após confirmação
   const handleConfirmReset = () => {
     setScores({ scoreA: 0, scoreB: 0 });
     handleCloseResetModal();
@@ -123,7 +116,6 @@ function GameScore({ scores, setScores }: GameScoreProps) {
     >
       <span className="text-lg font-medium">{`Time ${team}`}</span>
       <div className="flex items-center gap-4 mt-2 relative">
-        {/* Overlay de animação */}
         {animate && (
           <div
             style={{
@@ -168,13 +160,12 @@ function GameScore({ scores, setScores }: GameScoreProps) {
         variant="contained"
         color="secondary"
         startIcon={<RefreshIcon />}
-        onClick={handleOpenResetModal} // Alterado para abrir o modal
+        onClick={handleOpenResetModal}
         className="rounded-full px-6 py-2 shadow-lg"
       >
         Resetar Placar
       </Button>
 
-      {/* Modal de confirmação para Reset */}
       <Dialog
         open={isResetModalOpen}
         onClose={handleCloseResetModal}
@@ -199,7 +190,6 @@ function GameScore({ scores, setScores }: GameScoreProps) {
         </DialogActions>
       </Dialog>
 
-      {/* Snackbar para mostrar a notificação */}
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={4000}
