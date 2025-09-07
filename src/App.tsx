@@ -17,14 +17,15 @@ import {
   BottomNavigation,
   BottomNavigationAction,
   Paper,
-  Avatar, // Importar o componente Avatar do Material-UI
+  Avatar,
 } from "@mui/material";
 import ShuffleIcon from "@mui/icons-material/Shuffle";
 import SportsIcon from "@mui/icons-material/SportsSoccer";
-
 import "./App.css";
 
-// Definindo o tipo Player aqui para que o App possa usá-lo
+const marquinhosAvatar = "https://i.imgur.com/9Vrifl4.png";
+const luquinhasAvatar = "https://i.imgur.com/UwIDrOG.png";
+
 type Player = {
   id: number;
   name: string;
@@ -49,42 +50,36 @@ function Layout({ children }: { children: React.ReactNode }) {
       >
         <Toolbar className="flex justify-between items-center py-3 px-4 sm:px-6">
           {" "}
-          {/* Ajustado para espaçamento entre itens */}
-          {/* Avatar da esquerda */}
           <Avatar
             alt="Marquinhos Avatar"
-            src="/path/to/marquinhos-avatar.jpg" // Substitua pelo caminho da sua imagem
+            src={marquinhosAvatar}
             sx={{
               width: 40,
               height: 40,
               border: "2px solid white",
               flexShrink: 0,
-            }} // Tamanho e borda
+            }}
           />
           <Typography
             variant="h6"
-            className="font-bold text-white tracking-wide drop-shadow-sm flex-grow text-center" // Centraliza o título
+            className="font-bold text-white tracking-wide drop-shadow-sm flex-grow text-center"
           >
             Marquinhos & Luquinhas ©
           </Typography>
-          {/* Avatar da direita */}
           <Avatar
             alt="Luquinhas Avatar"
-            src="/path/to/luquinhas-avatar.jpg" // Substitua pelo caminho da sua imagem
+            src={luquinhasAvatar}
             sx={{
               width: 40,
               height: 40,
               border: "2px solid white",
               flexShrink: 0,
-            }} // Tamanho e borda
+            }}
           />
         </Toolbar>
       </AppBar>
 
-      {/* Conteúdo principal */}
       <main className="flex-1 overflow-y-auto p-4">{children}</main>
-
-      {/* Bottom Navigation estilo iOS */}
       <Paper
         sx={{
           position: "fixed",
@@ -141,7 +136,6 @@ function Layout({ children }: { children: React.ReactNode }) {
 }
 
 const App: React.FC = () => {
-  // Estado dos jogadores e times movido para o componente pai
   const [players, setPlayers] = useState<Player[]>(() => {
     try {
       const savedPlayers = localStorage.getItem("players");
@@ -164,7 +158,6 @@ const App: React.FC = () => {
 
   const [scores, setScores] = useState({ scoreA: 0, scoreB: 0 });
 
-  // Salvar jogadores no localStorage sempre que o estado muda
   useEffect(() => {
     try {
       localStorage.setItem("players", JSON.stringify(players));
@@ -173,7 +166,6 @@ const App: React.FC = () => {
     }
   }, [players]);
 
-  // Salvar times no localStorage sempre que o estado muda
   useEffect(() => {
     try {
       localStorage.setItem("teams", JSON.stringify(teams));
@@ -182,7 +174,6 @@ const App: React.FC = () => {
     }
   }, [teams]);
 
-  // Salvar scores no localStorage
   useEffect(() => {
     try {
       localStorage.setItem("scores", JSON.stringify(scores));
@@ -191,7 +182,6 @@ const App: React.FC = () => {
     }
   }, [scores]);
 
-  // Carregar scores do localStorage na inicialização
   useEffect(() => {
     try {
       const savedScores = localStorage.getItem("scores");
